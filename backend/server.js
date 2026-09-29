@@ -17,15 +17,38 @@ const app = express();
 connectDB();
 
 /* =========================================================
-   MIDDLEWARE
+   CORS
 ========================================================= */
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://kaees.vercel.app",
+];
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+      // Allow requests that don't have an Origin header
+      // such as Postman or server-to-server requests
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(
+        new Error(`CORS blocked for origin: ${origin}`)
+      );
+    },
     credentials: true,
   })
 );
+
+/* =========================================================
+   BODY PARSER
+========================================================= */
 
 app.use(express.json());
 
